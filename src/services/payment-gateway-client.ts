@@ -27,13 +27,20 @@ export interface GatewayResult {
  * generating a fresh idempotency key when the client didn't supply one so
  * that retries from a flaky mobile network can safely reuse it.
  */
+/** Client-facing alias for the system account that funds top-ups. */
+const SYSTEM_CASH_ALIAS = "topup";
+const SYSTEM_CASH_ACCOUNT = "system:cash";
+
 export function buildGatewayRequest(
   clientRequest: ClientPaymentRequest,
   generateId: () => string = randomUUID,
 ): GatewayPaymentRequest {
   return {
     idempotency_key: clientRequest.idempotency_key ?? generateId(),
-    payer_account: clientRequest.payer_account,
+    payer_account:
+      clientRequest.payer_account === SYSTEM_CASH_ALIAS
+        ? SYSTEM_CASH_ACCOUNT
+        : clientRequest.payer_account,
     payee_account: clientRequest.payee_account,
     amount_cents: clientRequest.amount_cents,
   };

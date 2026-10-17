@@ -51,6 +51,15 @@ describe("buildGatewayRequest", () => {
       /^[0-9a-f-]{36}$/,
     );
   });
+
+  it("translates the 'topup' alias to the system cash account", () => {
+    const gatewayRequest = buildGatewayRequest({
+      payer_account: "topup",
+      payee_account: "acc-2",
+      amount_cents: 500,
+    });
+    expect(gatewayRequest.payer_account).toBe("system:cash");
+  });
 });
 
 describe("PaymentGatewayClient.submitPayment", () => {
